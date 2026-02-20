@@ -27,6 +27,7 @@ struct Motor
 
     void Drive(float left, float right)
     {
+        left = -left; right = -right; // make it so that positive values actually reflect forward movement lol
         bool dirL = true; bool dirR = true;
         if(left < 0.f) 
         {
