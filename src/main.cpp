@@ -5,14 +5,16 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 #include <Encoder.h>
+#include <imu.hpp>
 
 Motor myMotors{};
+IMU myIMU{65535};
 
 void setup() {
-
 }
 
 void loop() {
+  myIMU.Update();
   myMotors.Drive(255.f, 255.f);
   delay(5000);
   myMotors.Drive(127.f, 127.f);
