@@ -4,6 +4,7 @@
 #include <Adafruit_ICM20649.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include <Encoder.h>
 
 Motor myMotors{};
 
