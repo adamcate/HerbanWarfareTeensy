@@ -1,6 +1,8 @@
 #include "imu.hpp"
-IMU::IMU(uint16_t delay_us)
+
+IMU::IMU(uint16_t delay_us, float dT)
 {
+    this->dT = dT;
     this->delay_us = delay_us;
     while (!Serial)
         delay(10); // pause Teensy until serial can begin
@@ -95,6 +97,10 @@ void IMU::Update()
 {
     if(!initialized) return;
     icm.getEvent(&accel, &gyro, &temp, &magnet);
+
+    direction.x += gyro.gyro.x * dT;
+    direction.y += gyro.gyro.y * dT;
+    direction.z += gyro.gyro.z * dT;
 }
 
 const sensors_vec_t * IMU::acc()
