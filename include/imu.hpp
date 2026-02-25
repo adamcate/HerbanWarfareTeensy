@@ -35,6 +35,7 @@ struct IMU
 
     const sensors_vec_t *mag();
 
-    void IMU::Update();
+    void Update();
+    void printStatus();
 };
 
