@@ -20,11 +20,12 @@ const auto deltaT = 5ms;
 const float deltaTS = 5.f / 1000.f;
 
 #define DRIVE_TIME 3000
+#define SPRAY_TIME 1000
 
 Queue queue{};
 Queue avoidQueue{};
 
-const Task _init_tasks[MAX_TASKS] = {DRIVE_T(0,0,255,255,2000),DRIVE(255,255,1000),HALT(1000),ROTATE(90),SPRAY(1000),EMPTY(),EMPTY(),EMPTY(),EMPTY()};
+const Task _init_tasks[MAX_TASKS] = {DRIVE_T(0,0,255,255,500),DRIVE(255,255,DRIVE_TIME),HALT(500),ROTATE(90),SPRAY(SPRAY_TIME),EMPTY(),EMPTY(),EMPTY(),EMPTY()};
 
 Motor myMotors{};
 IMU myIMU{65535, deltaTS};
