@@ -4,9 +4,11 @@ IMU::IMU(uint16_t delay_us, float dT)
 {
     this->dT = dT;
     this->delay_us = delay_us;
-    while (!Serial)
+    Serial.begin(115200);
+    while (!Serial && millis() < 3000)
         delay(10); // pause Teensy until serial can begin
     Serial.println("Serial initialized");
+
     if (!icm.begin_I2C())
     {
         Serial.println("Failed to find ICM20948 chip");
@@ -98,9 +100,9 @@ void IMU::Update()
     if(!initialized) return;
     icm.getEvent(&accel, &gyro, &temp, &magnet);
 
-    direction.x += gyro.gyro.x * dT;
-    direction.y += gyro.gyro.y * dT;
-    direction.z += gyro.gyro.z * dT;
+    direction.x += gyro.gyro.x * dT * 1.63;
+    direction.y += gyro.gyro.y * dT * 1.63;
+    direction.z += gyro.gyro.z * dT * 1.63;
 }
 
 const sensors_vec_t * IMU::acc()
@@ -121,4 +123,10 @@ const float IMU::tmp()
 const sensors_vec_t * IMU::mag()
 {
     return &magnet.magnetic;
+}
+
+void IMU::printStatus()
+{
+    Serial.printf("Angle: %.4f", direction.z*180.f/3.14159f);
+    Serial.println("");
 }
