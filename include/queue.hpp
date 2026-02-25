@@ -9,7 +9,7 @@
 #define LEFT 0
 #define RIGHT 1
 
-#define MAX_PARAMS 5
+#define MAX_PARAMS 6
 #define MAX_TASKS 9
 
 // Type to hold Task information, uses ID for identification

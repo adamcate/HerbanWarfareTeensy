@@ -9,5 +9,6 @@
 #define MOTOR_DIR_4 12
 
 #define PUMP_ENABLE 27
+#define PUMP_STATUS_LED 13
 
 #endif

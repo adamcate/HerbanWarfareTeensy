@@ -73,6 +73,8 @@ void Queue::setAbsolute(Task task, int pos){
 }
 // step forward in Queue and reset timers
 void Queue::beginNext(){
+    digitalWrite(PUMP_ENABLE, LOW);
+    digitalWrite(PUMP_STATUS_LED, LOW);
 	currFlag = curr->interruptID;
 	curr = next;
 	next = &tasks[(iter+1)% MAX_TASKS];
@@ -94,14 +96,17 @@ void Queue::startFrame(){
 // calculate frame time by time difference from startTime
 void Queue::endFrame(){
 	deltaT = micros() - startTime + 1ul;
+    delayMicroseconds(1);
+    //Serial.println(deltaT);
 }
 
 void Queue::executeAction(Motor &motors, IMU &myImu){	// really gross long switch statement
 	timeAccumulator += (int)(deltaT / 1000.f);
 
     int frac = (timeAccumulator) / curr->params[5];
-
+    float diff = 0.f;
     switch(curr->ID){
+
         case T_EMPTY:
             beginNext();
             return;
@@ -124,11 +129,12 @@ void Queue::executeAction(Motor &motors, IMU &myImu){	// really gross long switc
             wheelSpeed[LEFT] = lerp(curr->params[0],0.f,frac);
 		    wheelSpeed[RIGHT] = lerp(curr->params[1],0.f,frac);
             motors.Drive(wheelSpeed[LEFT],wheelSpeed[RIGHT]);
+            break;
         case T_ROTATE:
             // TODO add watcher & ROTATE code
             currAngle = myImu.direction.z * 180.f / 3.14159f;
 
-            float diff = angleDiff(currAngle,targetAngle);
+            diff = angleDiff(currAngle,targetAngle);
             if(!(abs(diff) < 10.f))
             {
                 float sign = 0.f;
@@ -144,12 +150,14 @@ void Queue::executeAction(Motor &motors, IMU &myImu){	// really gross long switc
             return;
         case T_SPRAY:
             digitalWrite(PUMP_ENABLE, HIGH);
+            digitalWrite(PUMP_STATUS_LED, HIGH);
+            return;
         default:
+            beginNext();
             break;
     }
     if(timeAccumulator >= curr->params[5] && curr->ID != T_ROTATE){
         beginNext();
-        digitalWrite(PUMP_ENABLE, LOW);
         return;
     }
 }
