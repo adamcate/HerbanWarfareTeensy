@@ -3,13 +3,7 @@
 
 #include <stdint.h>
 #include <Arduino.h>
-
-#define MOTOR_ENABLE_1 6
-#define MOTOR_ENABLE_2 10
-#define MOTOR_DIR_1 7
-#define MOTOR_DIR_2 8
-#define MOTOR_DIR_3 11
-#define MOTOR_DIR_4 12
+#include "pins.h"
 
 struct Motor
 {
