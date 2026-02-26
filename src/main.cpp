@@ -15,9 +15,9 @@
 using namespace std::chrono_literals;
 using namespace TeensyTimerTool;
 
-const auto deltaT = 5ms;
+const auto deltaT = 37.5ms;
 // hacky solution for now bc converting from chrono_literals SUCKS :( just make sure they match
-const float deltaTS = 5.f / 1000.f;
+const float deltaTS = 37.5f / 1000.f;
 
 #define DRIVE_TIME 1000
 #define SPRAY_TIME 1000
@@ -25,25 +25,51 @@ const float deltaTS = 5.f / 1000.f;
 Queue queue{};
 Queue avoidQueue{};
 
-const Task _init_tasks[MAX_TASKS] = {DRIVE_T(0,0,255,255,500),DRIVE(255,255,DRIVE_TIME),HALT(500),ROTATE(90),SPRAY(SPRAY_TIME),ROTATE(-90),SPRAY(SPRAY_TIME),EMPTY(),EMPTY()};
+const Task _init_tasks[MAX_TASKS] = {DRIVE_T(0,0,255,255,2000),DRIVE(255,255,DRIVE_TIME),HALT(2000),DRIVE(255,-255,200),EMPTY(),EMPTY(),EMPTY(),EMPTY(),EMPTY()};
 
 Motor myMotors{};
 IMU myIMU{65535, deltaTS};
 
 PeriodicTimer t1(RTC); // this uses the real time clock to trigger interrupts, integrating values etc.
 
+
+#define SPRAY_DURATION_MS 2500  // run motors for 2.5 seconds
+
+Motor motors;         // Create motor object
+bool spraying = false; // flag to know if motors are running
+unsigned long sprayStart = 0;
+
 void setup() {
-  t1.begin([] {myIMU.Update();}, deltaT); // SHOULD update the IMU data and integrate every 25ms
+  //t1.begin([] {myIMU.Update();}, deltaT); // SHOULD update the IMU data and integrate every 25ms
   pinMode(PUMP_ENABLE, OUTPUT);
   pinMode(PUMP_STATUS_LED, OUTPUT);
   digitalWrite(PUMP_ENABLE, LOW);
   for(int i = 0; i < MAX_TASKS; ++i) queue.pushToNextEmpty(_init_tasks[i]);
+  Serial.begin(115200);
+  Serial.println("Teensy ready");
 }
 
 void loop() {
-  queue.startFrame();
+    // Check for serial input
+  if (Serial.available()) {
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();  // remove any newline / whitespace
 
-  queue.executeAction(myMotors, myIMU);
+    if (cmd == "SPRAY" && !spraying) {
+      spraying = true;
+      sprayStart = millis();
 
-  queue.endFrame();
+      // Run motors (example: forward at half speed)
+      motors.Drive(255, 255);
+
+      Serial.println("SPRAYING");
+    }
+  }
+
+  // Stop motors after SPRAY_DURATION_MS
+  if (spraying && millis() - sprayStart >= SPRAY_DURATION_MS) {
+    motors.Drive(0, 0);  // stop motors
+    spraying = false;
+    Serial.println("DONE");
+  }
 }
