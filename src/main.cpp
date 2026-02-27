@@ -28,9 +28,9 @@ Queue avoidQueue{};
 const Task _init_tasks[MAX_TASKS] = {DRIVE_T(0,0,255,255,2000),DRIVE(255,255,DRIVE_TIME),HALT(2000),DRIVE(255,-255,200),EMPTY(),EMPTY(),EMPTY(),EMPTY(),EMPTY()};
 
 Motor myMotors{};
-IMU myIMU{65535, deltaTS};
+//IMU myIMU{65535, deltaTS};
 
-PeriodicTimer t1(RTC); // this uses the real time clock to trigger interrupts, integrating values etc.
+// PeriodicTimer t1(RTC); // this uses the real time clock to trigger interrupts, integrating values etc.
 
 
 #define SPRAY_DURATION_MS 2500  // run motors for 2.5 seconds
@@ -45,12 +45,14 @@ void setup() {
   pinMode(PUMP_STATUS_LED, OUTPUT);
   digitalWrite(PUMP_ENABLE, LOW);
   for(int i = 0; i < MAX_TASKS; ++i) queue.pushToNextEmpty(_init_tasks[i]);
-  Serial.begin(115200);
-  Serial.println("Teensy ready");
+  //Serial.begin(115200);
+  //Serial.println("Teensy ready");
 }
 
 void loop() {
-    // Check for serial input
+  myMotors.Drive(255.f,255.f);
+  delay(1000);
+    /*// Check for serial input
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();  // remove any newline / whitespace
@@ -71,5 +73,5 @@ void loop() {
     motors.Drive(0, 0);  // stop motors
     spraying = false;
     Serial.println("DONE");
-  }
+  }*/
 }
