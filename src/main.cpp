@@ -9,7 +9,6 @@
 #include <chrono>
 #include <TeensyTimerTool.h>
 #include <algorithm>
-#include "queue.hpp"
 #include "pins.h"
 
 using namespace std::chrono_literals;
@@ -21,11 +20,6 @@ const float deltaTS = 37.5f / 1000.f;
 
 #define DRIVE_TIME 1000
 #define SPRAY_TIME 1000
-
-Queue queue{};
-Queue avoidQueue{};
-
-const Task _init_tasks[MAX_TASKS] = {DRIVE_T(0,0,255,255,2000),DRIVE(255,255,DRIVE_TIME),HALT(2000),DRIVE(255,-255,200),EMPTY(),EMPTY(),EMPTY(),EMPTY(),EMPTY()};
 
 Motor myMotors{};
 //IMU myIMU{65535, deltaTS};
@@ -44,7 +38,6 @@ void setup() {
   pinMode(PUMP_ENABLE, OUTPUT);
   pinMode(PUMP_STATUS_LED, OUTPUT);
   digitalWrite(PUMP_ENABLE, LOW);
-  for(int i = 0; i < MAX_TASKS; ++i) queue.pushToNextEmpty(_init_tasks[i]);
   //Serial.begin(115200);
   //Serial.println("Teensy ready");
 }
