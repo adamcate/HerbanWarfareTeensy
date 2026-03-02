@@ -15,25 +15,8 @@ IMU::IMU(uint16_t delay_us, float dT)
         return;
     }
     Serial.println("ICM20948 Found!");
-    // icm.setAccelRange(ICM20948_ACCEL_RANGE_16_G);
-    Serial.print("Accelerometer range set to: ");
-    switch (icm.getAccelRange()) {
-    case ICM20948_ACCEL_RANGE_2_G:
-        Serial.println("+-2G");
-        break;
-    case ICM20948_ACCEL_RANGE_4_G:
-        Serial.println("+-4G");
-        break;
-    case ICM20948_ACCEL_RANGE_8_G:
-        Serial.println("+-8G");
-        break;
-    case ICM20948_ACCEL_RANGE_16_G:
-        Serial.println("+-16G");
-        break;
-    }
-    Serial.println("OK");
 
-    // icm.setGyroRange(ICM20948_GYRO_RANGE_2000_DPS);
+    icm.setGyroRange(ICM20948_GYRO_RANGE_250_DPS);
     Serial.print("Gyro range set to: ");
     switch (icm.getGyroRange()) {
     case ICM20948_GYRO_RANGE_250_DPS:
@@ -49,15 +32,6 @@ IMU::IMU(uint16_t delay_us, float dT)
         Serial.println("2000 degrees/s");
         break;
     }
-
-    //  icm.setAccelRateDivisor(4095);
-    uint16_t accel_divisor = icm.getAccelRateDivisor();
-    float accel_rate = 1125 / (1.0 + accel_divisor);
-
-    Serial.print("Accelerometer data rate divisor set to: ");
-    Serial.println(accel_divisor);
-    Serial.print("Accelerometer data rate (Hz) is approximately: ");
-    Serial.println(accel_rate);
 
     //  icm.setGyroRateDivisor(255);
     uint8_t gyro_divisor = icm.getGyroRateDivisor();

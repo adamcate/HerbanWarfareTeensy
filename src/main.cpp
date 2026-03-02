@@ -22,9 +22,9 @@ const float deltaTS = 37.5f / 1000.f;
 #define SPRAY_TIME 1000
 
 Motor myMotors{};
-//IMU myIMU{65535, deltaTS};
+IMU myIMU{65535, deltaTS};
 
-// PeriodicTimer t1(RTC); // this uses the real time clock to trigger interrupts, integrating values etc.
+PeriodicTimer t1(RTC); // this uses the real time clock to trigger interrupts, integrating values etc.
 
 
 #define SPRAY_DURATION_MS 2500  // run motors for 2.5 seconds
@@ -34,7 +34,7 @@ bool spraying = false; // flag to know if motors are running
 unsigned long sprayStart = 0;
 
 void setup() {
-  //t1.begin([] {myIMU.Update();}, deltaT); // SHOULD update the IMU data and integrate every 25ms
+  t1.begin([] {myIMU.Update();}, deltaT); // SHOULD update the IMU data and integrate every 25ms
   pinMode(PUMP_ENABLE, OUTPUT);
   pinMode(PUMP_STATUS_LED, OUTPUT);
   digitalWrite(PUMP_ENABLE, LOW);
@@ -44,7 +44,11 @@ void setup() {
 
 void loop() {
   myMotors.Drive(255.f,255.f);
-  delay(1000);
+  digitalWrite(PUMP_ENABLE, LOW);
+  delay(5000);
+  myMotors.Drive(0.f,0.f);
+  digitalWrite(PUMP_ENABLE, HIGH);
+  delay(500);
     /*// Check for serial input
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
